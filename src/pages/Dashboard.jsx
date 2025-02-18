@@ -34,20 +34,83 @@ function Dashboard() {
   const [editIndex, setEditIndex] = useState(null);
 
   // Hàm thêm hoặc cập nhật công việc
+  const handleAddOrUpdate = async () => {
+    if (!taskName.trim() || !taskDescription.trim() || !taskDeadline) return;
+  
+    if (editIndex !== null) {
+      // Lấy công việc cũ để giữ lại createdAt
+      const existingTask = tasks.find((task) => task.id === editIndex);
+  
+      const updatedTask = {
+        ...existingTask, // Giữ nguyên dữ liệu cũ (bao gồm createdAt)
+        name: taskName,
+        description: taskDescription,
+        status: taskStatus,
+        deadline: taskDeadline,
+        updatedAt: new Date().toLocaleString(), // Chỉ cập nhật thời gian sửa đổi
+      };
+  
+      try {
+        const response = await fetch(`http://localhost:5000/tasks/${editIndex}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedTask),
+        });
+  
+        if (response.ok) {
+          setTasks((prevTasks) =>
+            prevTasks.map((task) =>
+              task.id === editIndex ? updatedTask : task
+            )
+          );
+        }
+      } catch (error) {
+        console.error("Lỗi khi cập nhật công việc:", error);
+      }
+  
+      setEditIndex(null);
+    } else {
+      const newTask = {
+        name: taskName,
+        description: taskDescription,
+        status: taskStatus,
+        deadline: taskDeadline,
+        createdAt: new Date().toLocaleString(), // Giữ thời gian tạo
+        updatedAt: new Date().toLocaleString(),
+      };
+  
+      try {
+        const response = await fetch("http://localhost:5000/tasks", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newTask),
+        });
+  
+        if (response.ok) {
+          const addedTask = await response.json();
+          setTasks((prevTasks) => [addedTask, ...prevTasks]);
+        }
+      } catch (error) {
+        console.error("Lỗi khi thêm công việc:", error);
+      }
+    }
+  
+    setTaskName("");
+    setTaskDescription("");
+    setTaskStatus("Chưa làm");
+    setTaskDeadline("");
+  }; 
   // const handleAddOrUpdate = async () => {
   //   if (!taskName.trim() || !taskDescription.trim() || !taskDeadline) return;
   
+  //   // Nếu đang chỉnh sửa, thực hiện cập nhật
   //   if (editIndex !== null) {
-  //     // Lấy công việc cũ để giữ lại createdAt
-  //     const existingTask = tasks.find((task) => task.id === editIndex);
-  
   //     const updatedTask = {
-  //       ...existingTask, // Giữ nguyên dữ liệu cũ (bao gồm createdAt)
   //       name: taskName,
   //       description: taskDescription,
   //       status: taskStatus,
   //       deadline: taskDeadline,
-  //       updatedAt: new Date().toLocaleString(), // Chỉ cập nhật thời gian sửa đổi
+  //       updatedAt: new Date().toLocaleString(),
   //     };
   
   //     try {
@@ -60,7 +123,7 @@ function Dashboard() {
   //       if (response.ok) {
   //         setTasks((prevTasks) =>
   //           prevTasks.map((task) =>
-  //             task.id === editIndex ? updatedTask : task
+  //             task.id === editIndex ? { ...task, ...updatedTask } : task
   //           )
   //         );
   //       }
@@ -68,14 +131,15 @@ function Dashboard() {
   //       console.error("Lỗi khi cập nhật công việc:", error);
   //     }
   
-  //     setEditIndex(null);
+  //     setEditIndex(null); // Reset trạng thái chỉnh sửa
   //   } else {
+  //     // Nếu không phải đang chỉnh sửa, thêm công việc mới
   //     const newTask = {
   //       name: taskName,
   //       description: taskDescription,
   //       status: taskStatus,
   //       deadline: taskDeadline,
-  //       createdAt: new Date().toLocaleString(), // Giữ thời gian tạo
+  //       createdAt: new Date().toLocaleString(),
   //       updatedAt: new Date().toLocaleString(),
   //     };
   
@@ -95,76 +159,12 @@ function Dashboard() {
   //     }
   //   }
   
+  //   // Reset form về mặc định sau khi thêm/cập nhật
   //   setTaskName("");
   //   setTaskDescription("");
   //   setTaskStatus("Chưa làm");
   //   setTaskDeadline("");
-  // }; 
-  const handleAddOrUpdate = async () => {
-    if (!taskName.trim() || !taskDescription.trim() || !taskDeadline) return;
-  
-    // Nếu đang chỉnh sửa, thực hiện cập nhật
-    if (editIndex !== null) {
-      const updatedTask = {
-        name: taskName,
-        description: taskDescription,
-        status: taskStatus,
-        deadline: taskDeadline,
-        updatedAt: new Date().toLocaleString(),
-      };
-  
-      try {
-        const response = await fetch(`http://localhost:5001/tasks/${editIndex}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedTask),
-        });
-  
-        if (response.ok) {
-          setTasks((prevTasks) =>
-            prevTasks.map((task) =>
-              task.id === editIndex ? { ...task, ...updatedTask } : task
-            )
-          );
-        }
-      } catch (error) {
-        console.error("Lỗi khi cập nhật công việc:", error);
-      }
-  
-      setEditIndex(null); // Reset trạng thái chỉnh sửa
-    } else {
-      // Nếu không phải đang chỉnh sửa, thêm công việc mới
-      const newTask = {
-        name: taskName,
-        description: taskDescription,
-        status: taskStatus,
-        deadline: taskDeadline,
-        createdAt: new Date().toLocaleString(),
-        updatedAt: new Date().toLocaleString(),
-      };
-  
-      try {
-        const response = await fetch("http://localhost:5001/tasks", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newTask),
-        });
-  
-        if (response.ok) {
-          const addedTask = await response.json();
-          setTasks((prevTasks) => [addedTask, ...prevTasks]);
-        }
-      } catch (error) {
-        console.error("Lỗi khi thêm công việc:", error);
-      }
-    }
-  
-    // Reset form về mặc định sau khi thêm/cập nhật
-    setTaskName("");
-    setTaskDescription("");
-    setTaskStatus("Chưa làm");
-    setTaskDeadline("");
-  };
+  // };
    
   // Hàm xóa công việc
   const handleDelete = async (id) => {
@@ -256,65 +256,34 @@ function Dashboard() {
   };
   const [taskDeadline, setTaskDeadline] = useState("");
 
-
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
-      {/* Content area */}
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
         {/* Header */}
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
         <main className="grow">
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
-            {/* Tiêu đề */}
-            <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold mb-6">Danh sách công việc</h1>
-            <div className="mb-6 p-4 bg-gray-100 rounded-md">
+            <h1 className="text-2xl md:text-3xl font-bold mb-6">Danh sách công việc</h1>
+            {/* Form thêm công việc */}
+            <div className="mb-6 p-4 bg-white dark:bg-gray-800 rounded-md">
               <h2 className="text-xl font-semibold mb-3">Thêm công việc mới</h2>
-              <input
-                type="text"
-                placeholder="Tên công việc"
-                value={taskName}
-                onChange={(e) => setTaskName(e.target.value)}
-                className="block w-full mb-2 p-2 border rounded"
-              />
-              <textarea
-                placeholder="Mô tả công việc"
-                value={taskDescription}
-                onChange={(e) => setTaskDescription(e.target.value)}
-                className="block w-full mb-2 p-2 border rounded"
-              ></textarea>
-              <input
-                type="date"
-                value={taskDeadline}
-                onChange={(e) => setTaskDeadline(e.target.value)}
-                className="block w-full mb-2 p-2 border rounded"
-              />
-              <select
-                value={taskStatus}
-                onChange={(e) => setTaskStatus(e.target.value)}
-                className="block w-full mb-2 p-2 border rounded">
+              <input type="text" placeholder="Tên công việc" value={taskName} onChange={(e) => setTaskName(e.target.value)} className="block w-full mb-2 p-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+              <textarea placeholder="Mô tả công việc" value={taskDescription} onChange={(e) => setTaskDescription(e.target.value)} className="block w-full mb-2 p-2 border rounded dark:bg-gray-700 dark:border-gray-600"></textarea>
+              <input type="date" value={taskDeadline} onChange={(e) => setTaskDeadline(e.target.value)} className="block w-full mb-2 p-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+              <select value={taskStatus} onChange={(e) => setTaskStatus(e.target.value)} className="block w-full mb-2 p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
                 <option value="Chưa làm">Chưa làm</option>
                 <option value="Đang làm">Đang làm</option>
                 <option value="Hoàn thành">Hoàn thành</option>
               </select>
-
-              <button
-                onClick={handleAddOrUpdate}
-                className={`px-4 py-2 rounded ${editIndex !== null ? "bg-yellow-500" : "bg-blue-500"} text-white`}
-              >
-                {editIndex !== null ? "Cập nhật công việc" : "Thêm công việc"}
-              </button>
-
+              <button onClick={handleAddOrUpdate} className={`px-4 py-2 rounded ${editIndex !== null ? "bg-yellow-500" : "bg-blue-500"} text-white dark:bg-yellow-600 dark:bg-blue-600`}>{editIndex !== null ? "Cập nhật công việc" : "Thêm công việc"}</button>
             </div>
-
             {/* Bảng danh sách công việc */}
             <div className="overflow-x-auto">
-              <table className="min-w-full bg-white border border-gray-200 shadow-md rounded-md">
+              <table className="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-md rounded-md">
                 <thead>
-                  <tr className="bg-gray-100 border-b">
+                  <tr className="bg-gray-100 dark:bg-gray-700 border-b dark:border-gray-600">
                     <th className="p-3 text-left">Tên công việc</th>
                     <th className="p-3 text-left">Trạng thái</th>
                     <th className="p-3 text-left">Thời gian tạo</th>
@@ -354,3 +323,4 @@ function Dashboard() {
 }
 
 export default Dashboard;
+
