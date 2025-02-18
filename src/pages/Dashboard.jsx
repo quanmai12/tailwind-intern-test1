@@ -34,35 +34,104 @@ function Dashboard() {
   const [editIndex, setEditIndex] = useState(null);
 
   // Hàm thêm hoặc cập nhật công việc
+  // const handleAddOrUpdate = async () => {
+  //   if (!taskName.trim() || !taskDescription.trim() || !taskDeadline) return;
+
+  //   if (editIndex !== null) {
+  //     // Lấy công việc cũ để giữ lại createdAt
+  //     const existingTask = tasks.find((task) => task.id === editIndex);
+
+  //     const updatedTask = {
+  //       ...existingTask, // Giữ nguyên dữ liệu cũ (bao gồm createdAt)
+  //       name: taskName,
+  //       description: taskDescription,
+  //       status: taskStatus,
+  //       deadline: taskDeadline,
+  //       updatedAt: new Date().toLocaleString(), // Chỉ cập nhật thời gian sửa đổi
+  //     };
+
+  //     try {
+  //       const response = await fetch(`http://localhost:5000/tasks/${editIndex}`, {
+  //         method: "PUT",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify(updatedTask),
+  //       });
+
+  //       const result = await response.json();
+  //       console.log("Update response:", result);
+  //       if (response.ok) {
+  //         setTasks((prevTasks) =>
+  //           prevTasks.map((task) =>
+  //             task.id === editIndex ? updatedTask : task
+  //           )
+  //         );
+  //       }
+  //     } catch (error) {
+  //       console.error("Lỗi khi cập nhật công việc:", error);
+  //     }
+
+  //     setEditIndex(null);
+  //   } else {
+  //     const newTask = {
+  //       name: taskName,
+  //       description: taskDescription,
+  //       status: taskStatus,
+  //       deadline: taskDeadline,
+  //       createdAt: new Date().toLocaleString(), // Giữ thời gian tạo
+  //       updatedAt: new Date().toLocaleString(),
+  //     };
+
+  //     try {
+  //       const response = await fetch("http://localhost:5000/tasks", {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify(newTask),
+  //       });
+
+  //       if (response.ok) {
+  //         const addedTask = await response.json();
+  //         setTasks((prevTasks) => [addedTask, ...prevTasks]);
+  //       }
+  //     } catch (error) {
+  //       console.error("Lỗi khi thêm công việc:", error);
+  //     }
+  //   }
+
+  //   setTaskName("");
+  //   setTaskDescription("");
+  //   setTaskStatus("Chưa làm");
+  //   setTaskDeadline("");
+  // };
   const handleAddOrUpdate = async () => {
     if (!taskName.trim() || !taskDescription.trim() || !taskDeadline) return;
   
     if (editIndex !== null) {
-      // Lấy công việc cũ để giữ lại createdAt
-      const existingTask = tasks.find((task) => task.id === editIndex);
+      console.log("Updating task with ID:", editIndex);
   
       const updatedTask = {
-        ...existingTask, // Giữ nguyên dữ liệu cũ (bao gồm createdAt)
+        id: editIndex, // Đảm bảo ID tồn tại
         name: taskName,
         description: taskDescription,
         status: taskStatus,
         deadline: taskDeadline,
-        updatedAt: new Date().toLocaleString(), // Chỉ cập nhật thời gian sửa đổi
+        updatedAt: new Date().toLocaleString(),
       };
   
       try {
-        const response = await fetch(`http://localhost:5000/tasks/${editIndex}`, {
+        const response = await fetch(`http://localhost:5001/tasks/${editIndex}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updatedTask),
         });
   
         if (response.ok) {
+          const updatedData = await response.json();
           setTasks((prevTasks) =>
-            prevTasks.map((task) =>
-              task.id === editIndex ? updatedTask : task
-            )
+            prevTasks.map((task) => (task.id === editIndex ? updatedData : task))
           );
+          console.log("Task updated successfully:", updatedData);
+        } else {
+          console.error("Update failed:", await response.text());
         }
       } catch (error) {
         console.error("Lỗi khi cập nhật công việc:", error);
@@ -70,17 +139,19 @@ function Dashboard() {
   
       setEditIndex(null);
     } else {
+      console.log("Adding new task");
+  
       const newTask = {
         name: taskName,
         description: taskDescription,
         status: taskStatus,
         deadline: taskDeadline,
-        createdAt: new Date().toLocaleString(), // Giữ thời gian tạo
+        createdAt: new Date().toLocaleString(),
         updatedAt: new Date().toLocaleString(),
       };
   
       try {
-        const response = await fetch("http://localhost:5000/tasks", {
+        const response = await fetch("http://localhost:5001/tasks", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newTask),
@@ -89,6 +160,9 @@ function Dashboard() {
         if (response.ok) {
           const addedTask = await response.json();
           setTasks((prevTasks) => [addedTask, ...prevTasks]);
+          console.log("Task added successfully:", addedTask);
+        } else {
+          console.error("Add failed:", await response.text());
         }
       } catch (error) {
         console.error("Lỗi khi thêm công việc:", error);
@@ -99,10 +173,10 @@ function Dashboard() {
     setTaskDescription("");
     setTaskStatus("Chưa làm");
     setTaskDeadline("");
-  }; 
-  // const handleAddOrUpdate = async () => {
-  //   if (!taskName.trim() || !taskDescription.trim() || !taskDeadline) return;
+  };
   
+  //   if (!taskName.trim() || !taskDescription.trim() || !taskDeadline) return;
+
   //   // Nếu đang chỉnh sửa, thực hiện cập nhật
   //   if (editIndex !== null) {
   //     const updatedTask = {
@@ -112,14 +186,14 @@ function Dashboard() {
   //       deadline: taskDeadline,
   //       updatedAt: new Date().toLocaleString(),
   //     };
-  
+
   //     try {
   //       const response = await fetch(`http://localhost:5000/tasks/${editIndex}`, {
   //         method: "PUT",
   //         headers: { "Content-Type": "application/json" },
   //         body: JSON.stringify(updatedTask),
   //       });
-  
+
   //       if (response.ok) {
   //         setTasks((prevTasks) =>
   //           prevTasks.map((task) =>
@@ -130,7 +204,7 @@ function Dashboard() {
   //     } catch (error) {
   //       console.error("Lỗi khi cập nhật công việc:", error);
   //     }
-  
+
   //     setEditIndex(null); // Reset trạng thái chỉnh sửa
   //   } else {
   //     // Nếu không phải đang chỉnh sửa, thêm công việc mới
@@ -142,14 +216,14 @@ function Dashboard() {
   //       createdAt: new Date().toLocaleString(),
   //       updatedAt: new Date().toLocaleString(),
   //     };
-  
+
   //     try {
   //       const response = await fetch("http://localhost:5000/tasks", {
   //         method: "POST",
   //         headers: { "Content-Type": "application/json" },
   //         body: JSON.stringify(newTask),
   //       });
-  
+
   //       if (response.ok) {
   //         const addedTask = await response.json();
   //         setTasks((prevTasks) => [addedTask, ...prevTasks]);
@@ -158,14 +232,14 @@ function Dashboard() {
   //       console.error("Lỗi khi thêm công việc:", error);
   //     }
   //   }
-  
+
   //   // Reset form về mặc định sau khi thêm/cập nhật
   //   setTaskName("");
   //   setTaskDescription("");
   //   setTaskStatus("Chưa làm");
   //   setTaskDeadline("");
   // };
-   
+
   // Hàm xóa công việc
   const handleDelete = async (id) => {
     try {
