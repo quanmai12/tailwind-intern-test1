@@ -1,0 +1,49 @@
+{
+  "tasks": [
+    {
+      "name": "Lập kế hoạch marketing",
+      "description": "Chiến dịch marketing quý 2",
+      "status": "Hoàn thành",
+      "deadline": "1234-02-07",
+      "updatedAt": "2/18/2025, 3:12:42 PM",
+      "id": "1"
+    },
+    {
+      "id": "3",
+      "name": "Lập kế hoạch marketing",
+      "description": "Chiến dịch marketing quý 4",
+      "status": "Đang làm",
+      "createdAt": "2024-02-18 11:00",
+      "updatedAt": "2/18/2025, 2:30:55 PM",
+      "deadline": "5678-12-31"
+    },
+    {
+      "name": "reactjs",
+      "description": "reactjs",
+      "status": "Đang làm",
+      "deadline": "2013-02-28",
+      "updatedAt": "2/18/2025, 2:27:33 PM",
+      "id": "2f23"
+    },
+    {
+      "id": "3145",
+      "name": "Lập kế hoạch marketing",
+      "description": "Chiến dịch marketing quý 7",
+      "status": "Chưa làm",
+      "priority": "Bình thường",
+      "deadline": "2222-02-22",
+      "createdAt": "2/18/2025, 2:17:53 PM",
+      "updatedAt": "2/18/2025, 2:32:28 PM"
+    },
+    {
+      "id": "f013",
+      "name": "Lập kế hoạch marketing",
+      "description": "Chiến dịch marketing quý 2",
+      "status": "Hoàn thành",
+      "priority": "Thấp",
+      "deadline": "1111-11-11",
+      "createdAt": "2/18/2025, 2:18:20 PM",
+      "updatedAt": "2/18/2025, 2:18:20 PM"
+    }
+  ]
+}
