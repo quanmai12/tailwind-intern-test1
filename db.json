@@ -1,39 +1,13 @@
 {
   "tasks": [
     {
-      "id": "3145",
-      "name": "Lập kế hoạch marketing",
-      "description": "Chiến dịch marketing quý 7",
-      "status": "Chưa làm",
-      "deadline": "2222-02-12",
-      "updatedAt": "2/18/2025, 5:23:52 PM"
-    },
-    {
-      "id": "0b35",
-      "name": "áda",
-      "description": "áda",
-      "status": "Đang làm",
-      "deadline": "11313-02-13",
-      "createdAt": "2/18/2025, 3:48:20 PM",
-      "updatedAt": "2/18/2025, 3:48:20 PM"
-    },
-    {
-      "id": "701f",
-      "name": "ád",
-      "description": "ád",
-      "status": "Chưa làm",
-      "deadline": "0232-02-23",
-      "createdAt": "2/18/2025, 3:56:24 PM",
-      "updatedAt": "2/18/2025, 3:56:24 PM"
-    },
-    {
-      "id": "a514",
-      "name": "abc",
-      "description": "xyz",
-      "status": "Đang làm",
-      "deadline": "5678-12-31",
-      "createdAt": "2/18/2025, 5:20:35 PM",
-      "updatedAt": "2/18/2025, 5:20:35 PM"
+      "id": "583a",
+      "name": "html",
+      "assignee": "quan",
+      "description": "none",
+      "status": "Hoàn thành",
+      "deadline": "0212-11-21",
+      "updatedAt": "2/19/2025, 5:26:51 PM"
     }
   ]
 }
