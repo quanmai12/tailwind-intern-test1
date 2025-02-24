@@ -141,3 +141,12 @@ button:hover {
   transition: all 0.2s ease-in-out;
 }
 
+.truncate-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 250px;
+  display: inline-block;
+}
+
+
